@@ -7,6 +7,7 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { ThreeMFLoader } from 'three/examples/jsm/loaders/3MFLoader.js';
 import { VRMLLoader } from 'three/examples/jsm/loaders/VRMLLoader.js';
+import { STEPLoader, IGESLoader, JTLoader, IPTLoader, IAMLoader, PRTLoader, ASMLoader, PARLoader, XTLoader, XBLoader } from './loaders/CADLoaders';
 import { VisualStyle, Projection, CrossSectionState } from '../../types';
 
 interface ThreeViewerProps {
@@ -265,13 +266,23 @@ const ThreeViewer = forwardRef<ThreeViewerRef, ThreeViewerProps>(({ file, visual
     const url = URL.createObjectURL(file);
     const extension = file.name.split('.').pop()?.toLowerCase();
     
-    let loader: GLTFLoader | OBJLoader | STLLoader | FBXLoader | ThreeMFLoader | VRMLLoader;
+    let loader: GLTFLoader | OBJLoader | STLLoader | FBXLoader | ThreeMFLoader | VRMLLoader | STEPLoader | IGESLoader | JTLoader | IPTLoader | IAMLoader | PRTLoader | ASMLoader | PARLoader | XTLoader | XBLoader;
     if (extension === 'glb' || extension === 'gltf') loader = new GLTFLoader();
     else if (extension === 'obj') loader = new OBJLoader();
     else if (extension === 'stl') loader = new STLLoader();
     else if (extension === 'fbx') loader = new FBXLoader();
     else if (extension === '3mf') loader = new ThreeMFLoader();
     else if (extension === 'wrl') loader = new VRMLLoader();
+    else if (extension === 'step' || extension === 'stp') loader = new STEPLoader();
+    else if (extension === 'iges' || extension === 'igs') loader = new IGESLoader();
+    else if (extension === 'jt') loader = new JTLoader();
+    else if (extension === 'ipt') loader = new IPTLoader();
+    else if (extension === 'iam') loader = new IAMLoader();
+    else if (extension === 'prt') loader = new PRTLoader();
+    else if (extension === 'asm') loader = new ASMLoader();
+    else if (extension === 'par') loader = new PARLoader();
+    else if (extension === 'x_t') loader = new XTLoader();
+    else if (extension === 'x_b') loader = new XBLoader();
     else {
       console.error('Unsupported file type');
       return;

@@ -7,9 +7,10 @@ interface UploadPageProps {
 }
 
 const supportedFormats = {
-    "Implemented": ["GLB", "GLTF", "OBJ", "STL", "FBX", "3MF", "WRL"],
-    "Native CAD (Planned)": ["SLDPRT", "SLDASM", "CATPART", "CATPRODUCT", "IPT", "IAM", "PRT", "ASM", "PAR", "X_T", "X_B"],
-    "Neutral (Planned)": ["STEP", "IGES", "JT"],
+    "Fully Supported": ["GLB", "GLTF", "OBJ", "STL", "FBX", "3MF", "WRL"],
+    "Experimental Support": ["STEP", "IGES", "JT"],
+    "Placeholder Support": ["IPT", "IAM", "PRT", "ASM", "PAR", "X_T", "X_B"],
+    "Future Support": ["SLDPRT", "SLDASM", "CATPART", "CATPRODUCT"],
 };
 
 const UploadPage: React.FC<UploadPageProps> = ({ onFileSelect }) => {
@@ -39,7 +40,8 @@ const UploadPage: React.FC<UploadPageProps> = ({ onFileSelect }) => {
           ) : (
             <p className="text-xl text-gray-400">Drag & drop a 3D file here, or click to select</p>
           )}
-          <p className="text-sm text-gray-500 mt-2">Supported: GLB, GLTF, OBJ, STL, FBX, 3MF, WRL</p>
+          <p className="text-sm text-gray-500 mt-2">Supported: GLB, GLTF, OBJ, STL, FBX, 3MF, WRL, STEP, IGES, JT, IPT*, IAM*, PRT*, ASM*, PAR*, X_T*, X_B*</p>
+          <p className="text-xs text-amber-400 mt-1">* Experimental/Limited support - proprietary formats show placeholders</p>
         </div>
 
         <div className="mt-10 max-w-4xl mx-auto">
@@ -48,9 +50,20 @@ const UploadPage: React.FC<UploadPageProps> = ({ onFileSelect }) => {
                  {Object.entries(supportedFormats).filter(([, formats]) => formats.length > 0).map(([category, formats]) => (
                      <div key={category} className="bg-gray-800 p-4 rounded-lg">
                         <h4 className={`font-bold mb-2 ${category === 'Implemented' ? 'text-green-400' : 'text-amber-400'}`}>{category}</h4>
+                        <h4 className={`font-bold mb-2 ${
+                            category === 'Fully Supported' ? 'text-green-400' : 
+                            category === 'Experimental Support' ? 'text-blue-400' :
+                            category === 'Placeholder Support' ? 'text-amber-400' : 
+                            'text-gray-400'
+                        }`}>{category}</h4>
                         <div className="flex flex-wrap gap-2">
                             {formats.map(format => (
-                                <span key={format} className={`px-2 py-1 text-xs rounded-full ${category === 'Implemented' ? 'bg-green-900 text-green-200' : 'bg-amber-900 text-amber-200'}`}>{format}</span>
+                                <span key={format} className={`px-2 py-1 text-xs rounded-full ${
+                                    category === 'Fully Supported' ? 'bg-green-900 text-green-200' : 
+                                    category === 'Experimental Support' ? 'bg-blue-900 text-blue-200' :
+                                    category === 'Placeholder Support' ? 'bg-amber-900 text-amber-200' : 
+                                    'bg-gray-900 text-gray-200'
+                                }`}>{format}</span>
                             ))}
                         </div>
                      </div>

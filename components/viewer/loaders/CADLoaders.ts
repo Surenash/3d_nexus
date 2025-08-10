@@ -1,27 +1,38 @@
 import * as THREE from 'three';
+import { STEPParser } from './STEPParser';
 
 // STEP file loader using experimental libraries
 export class STEPLoader {
   load(url: string, onLoad: (object: THREE.Object3D) => void, onProgress?: (event: ProgressEvent) => void, onError?: (event: ErrorEvent) => void) {
     const loader = new THREE.FileLoader();
-    loader.setResponseType('arraybuffer');
+    loader.setResponseType('text');
     
     loader.load(url, (data) => {
       try {
-        // This is a placeholder for STEP parsing
-        // In practice, this would require OpenCASCADE.js or similar
-        console.warn('STEP format support is experimental and limited');
+        console.log('Parsing STEP file...');
+        const parser = new STEPParser();
+        const model = parser.parse(data as string);
         
-        // Create a placeholder geometry for now
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const material = new THREE.MeshPhongMaterial({ color: 0xcccccc });
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.name = 'STEP Model (Placeholder)';
+        if (model.children.length === 0) {
+          // Fallback to placeholder if parsing fails
+          console.warn('STEP parsing failed, showing placeholder');
+          const geometry = new THREE.BoxGeometry(1, 1, 1);
+          const material = new THREE.MeshPhongMaterial({ color: 0xcccccc });
+          const mesh = new THREE.Mesh(geometry, material);
+          mesh.name = 'STEP Model (Parse Failed)';
+          model.add(mesh);
+        }
         
-        onLoad(mesh);
+        onLoad(model);
       } catch (error) {
         console.error('Error parsing STEP file:', error);
-        if (onError) onError(error as ErrorEvent);
+        
+        // Show placeholder on error
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new THREE.MeshPhongMaterial({ color: 0xff6b6b });
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.name = 'STEP Model (Error)';
+        onLoad(mesh);
       }
     }, onProgress, onError);
   }

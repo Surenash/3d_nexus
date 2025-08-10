@@ -1,0 +1,6 @@
+{
+  "name": "Nexus 3D Viewer",
+  "description": "An advanced, web-based 3D model viewer for inspecting and analyzing CAD files. Supports standard formats like GLB, OBJ, and STL, and features tools like cross-sectioning, model hierarchy inspection, and multiple visual styles.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}

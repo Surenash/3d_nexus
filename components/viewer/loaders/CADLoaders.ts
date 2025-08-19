@@ -9,21 +9,29 @@ export class STEPLoader {
     
     loader.load(url, (data) => {
       try {
-        console.log('Parsing STEP file...');
+        console.log('Loading STEP file, size:', (data as string).length, 'characters');
         const parser = new STEPParser();
         const model = parser.parse(data as string);
+        
+        console.log('STEP parsing completed, children:', model.children.length);
         
         if (model.children.length === 0) {
           // Fallback to placeholder if parsing fails
           console.warn('STEP parsing failed, showing placeholder');
           const geometry = new THREE.BoxGeometry(1, 1, 1);
-          const material = new THREE.MeshPhongMaterial({ color: 0xcccccc });
+          const material = new THREE.MeshPhongMaterial({ 
+            color: 0xcccccc,
+            transparent: true,
+            opacity: 0.8
+          });
           const mesh = new THREE.Mesh(geometry, material);
           mesh.name = 'STEP Model (Parse Failed)';
-          model.add(mesh);
+          const fallbackGroup = new THREE.Group();
+          fallbackGroup.add(mesh);
+          onLoad(fallbackGroup);
+        } else {
+          onLoad(model);
         }
-        
-        onLoad(model);
       } catch (error) {
         console.error('Error parsing STEP file:', error);
         
@@ -32,7 +40,9 @@ export class STEPLoader {
         const material = new THREE.MeshPhongMaterial({ color: 0xff6b6b });
         const mesh = new THREE.Mesh(geometry, material);
         mesh.name = 'STEP Model (Error)';
-        onLoad(mesh);
+        const errorGroup = new THREE.Group();
+        errorGroup.add(mesh);
+        onLoad(errorGroup);
       }
     }, onProgress, onError);
   }

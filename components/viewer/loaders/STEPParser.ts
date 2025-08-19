@@ -118,26 +118,13 @@ export class IAMLoader {
     
     // Create multiple placeholder objects to simulate assembly
     for (let i = 0; i < 3; i++) {
-    if (this.points.length < 3) {
-      console.log('Not enough points for geometry creation');
-      return null;
-    }
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
       const material = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
-    console.log(`Creating geometry from ${this.points.length} points`);
-    
-    // Create geometry from points
+      const mesh = new THREE.Mesh(geometry, material);
       mesh.position.set(i - 1, 0, 0);
-    const normals: number[] = [];
-    
       mesh.name = `Part ${i + 1}`;
       group.add(mesh);
     }
-    
-      console.log(`Bounding box size: ${size.x}, ${size.y}, ${size.z}`);
-      console.log(`Bounding box center: ${center.x}, ${center.y}, ${center.z}`);
-      
-    console.log(`Created geometry with ${vertices.length / 3} vertices and ${indices.length / 3} triangles`);
-    console.log(`Creating fallback geometry with ${this.points.length} points`);
     
     if (group.children.length > 0) {
       // Calculate bounding box of all children
@@ -164,66 +151,17 @@ export class IAMLoader {
           } else if (maxDim > 100) {
             scale = 10 / maxDim; // Scale down if too large
           }
-    // Create triangles from points
+          
           if (scale !== 1) {
-    
-    if (this.points.length >= 4) {
-      // Create a simple convex hull approximation
-      const center = new THREE.Vector3();
-      this.points.forEach(p => center.add(p));
-      center.divideScalar(this.points.length);
-      
-      // Create triangles connecting each edge to the center
-      for (let i = 0; i < this.points.length; i++) {
-        const next = (i + 1) % this.points.length;
-        
-        // Add center point
-        vertices.push(center.x, center.y, center.z);
-        const centerIndex = vertices.length / 3 - 1;
-        
-        // Create triangle
-        indices.push(i, next, centerIndex);
-      }
-      
-      // Also add point cloud for debugging
-      if (this.points.length > 0) {
-        const pointsGeometry = new THREE.BufferGeometry();
-        const positions = new Float32Array(this.points.length * 3);
-        
-        this.points.forEach((point, i) => {
-          positions[i * 3] = point.x;
-          positions[i * 3 + 1] = point.y;
-          positions[i * 3 + 2] = point.z;
-        });
-        
-        pointsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        
-        const pointsMaterial = new THREE.PointsMaterial({
-          color: 0x00ff00,
-          size: 0.1,
-          sizeAttenuation: false
-        });
-        
-        const pointCloud = new THREE.Points(pointsGeometry, pointsMaterial);
-        pointCloud.name = 'STEP Points Debug';
-        group.add(pointCloud);
-      }
-    } else {
-      // Simple triangulation for 3 points
-      console.log('No points found, creating default cube');
-      for (let i = 0; i < this.points.length - 2; i += 3) {
-        if (i + 2 < this.points.length) {
-          indices.push(i, i + 1, i + 2);
+            group.scale.multiplyScalar(scale);
+          }
         }
       }
     }
+    
     setTimeout(() => onLoad(group), 100);
   }
 }
-      geometry.computeVertexNormals();
-    } else {
-      console.warn('No triangles created from points');
-      return null;
 
 export class PRTLoader {
   load(url: string, onLoad: (object: THREE.Object3D) => void, onProgress?: (event: ProgressEvent) => void, onError?: (event: ErrorEvent) => void) {

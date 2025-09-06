@@ -1,6 +1,6 @@
-# Run and deploy your AI Studio app
+
 visit  https://nexus-3d-viewer-594642612013.us-west1.run.app
-This contains everything you need to run your app locally.
+
 
 ## Run Locally
 
